@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>🩷 하츄핑 출석부</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Gothic:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #FF6EB4;
+    --pink-light: #FFB3D9;
+    --pink-pale: #FFF0F8;
+    --pink-deep: #E8429A;
+    --yellow: #FFE066;
+    --yellow-light: #FFF8CC;
+    --white: #FFFFFF;
+    --text: #5A2D5A;
+    --text-light: #A06080;
+    --shadow: rgba(255,110,180,0.2);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    background: var(--pink-pale);
+    font-family: 'Nanum Gothic', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, #FFD6EC 0%, transparent 70%);
+    top: -100px; right: -100px;
+    border-radius: 50%;
+    pointer-events: none; z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    width: 350px; height: 350px;
+    background: radial-gradient(circle, #D6F5FF 0%, transparent 70%);
+    bottom: -80px; left: -80px;
+    border-radius: 50%;
+    pointer-events: none; z-index: 0;
+  }
+
+  .page { display: none; position: relative; z-index: 1; max-width: 520px; margin: 0 auto; padding: 24px 20px 60px; }
+  .page.active { display: block; }
+
+  .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+  .top-logo { font-family: 'Jua', sans-serif; font-size: 20px; color: var(--pink-deep); display: flex; align-items: center; gap: 6px; }
+  .bounce { display: inline-block; animation: bounce 2s ease-in-out infinite; }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+  .btn-back {
+    background: var(--white);
+    border: 2px solid var(--pink-light);
+    color: var(--pink-deep);
+    font-family: 'Jua', sans-serif;
+    font-size: 14px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  .hero { text-align: center; padding: 20px 0 32px; }
+  .hero-icon { font-size: 72px; display: block; animation: bounce 2s ease-in-out infinite; margin-bottom: 12px; }
+  .hero h1 { font-family: 'Jua', sans-serif; font-size: 36px; color: var(--pink-deep); text-shadow: 3px 3px 0 var(--pink-light); margin-bottom: 8px; }
+  .hero p { font-size: 14px; color: var(--text-light); }
+
+  .card { background: var(--white); border-radius: 24px; padding: 28px 24px; box-shadow: 0 8px 32px var(--shadow); border: 2px solid #FFE0F2; margin-bottom: 16px; animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both; }
+  @keyframes popIn { from{opacity:0;transform:scale(0.93)} to{opacity:1;transform:scale(1)} }
+
+  .card-title { font-family: 'Jua', sans-serif; font-size: 18px; color: var(--pink-deep); margin-bottom: 20px; display: flex; align-items: center; gap: 6px; }
+
+  .field { margin-bottom: 18px; }
+  .field label { display: block; font-size: 13px; font-weight: 700; color: var(--text-light); margin-bottom: 7px; letter-spacing: 0.04em; }
+  .field input {
+    width: 100%;
+    border: 2.5px solid var(--pink-light);
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-size: 16px;
+    font-family: 'Nanum Gothic', sans-serif;
+    color: var(--text);
+    background: var(--pink-pale);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+  }
+  .field input:focus { border-color: var(--pink); background: var(--white); box-shadow: 0 0 0 4px rgba(255,110,180,0.13); }
+  .field input::placeholder { color: var(--text-light); opacity: 0.7; }
+
+  .class-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .class-btn {
+    background: var(--pink-pale);
+    border: 2.5px solid var(--pink-light);
+    border-radius: 14px;
+    padding: 16px 10px;
+    font-family: 'Jua', sans-serif;
+    font-size: 16px;
+    color: var(--text-light);
+    cursor: pointer;
+    text-align: center;
+    min-height: 80px;
+    touch-action: manipulation;
+    transition: all 0.18s;
+    -webkit-appearance: none;
+  }
+  .class-btn .class-icon { font-size: 28px; display: block; margin-bottom: 4px; pointer-events: none; }
+  .class-btn.selected { background: linear-gradient(135deg, var(--pink-light), #FFD6EC); border-color: var(--pink); color: var(--pink-deep); box-shadow: 0 4px 12px var(--shadow); }
+
+  .btn-submit {
+    width: 100%;
+    background: linear-gradient(135deg, var(--pink) 0%, var(--pink-deep) 100%);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    padding: 18px;
+    font-family: 'Jua', sans-serif;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px var(--shadow);
+    margin-top: 4px;
+    min-height: 56px;
+    touch-action: manipulation;
+    -webkit-appearance: none;
+  }
+
+  .btn-list {
+    width: 100%;
+    background: var(--white);
+    color: var(--pink-deep);
+    border: 2.5px solid var(--pink-light);
+    border-radius: 16px;
+    padding: 16px;
+    font-family: 'Jua', sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    min-height: 52px;
+    touch-action: manipulation;
+    -webkit-appearance: none;
+  }
+
+  .toast {
+    display: none;
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--pink), var(--pink-deep));
+    color: white;
+    font-family: 'Jua', sans-serif;
+    font-size: 16px;
+    padding: 14px 28px;
+    border-radius: 999px;
+    box-shadow: 0 8px 24px var(--shadow);
+    z-index: 9999;
+    white-space: nowrap;
+  }
+
+  .list-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+  .list-title { font-family: 'Jua', sans-serif; font-size: 22px; color: var(--pink-deep); }
+
+  .filter-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .filter-tab {
+    background: var(--white);
+    border: 2px solid var(--pink-light);
+    color: var(--text-light);
+    font-family: 'Jua', sans-serif;
+    font-size: 14px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+    min-height: 44px;
+    touch-action: manipulation;
+    -webkit-appearance: none;
+  }
+  .filter-tab.active { background: var(--pink); border-color: var(--pink); color: white; box-shadow: 0 3px 10px var(--shadow); }
+
+  .attendance-table { width: 100%; border-collapse: collapse; background: var(--white); border-radius: 18px; overflow: hidden; box-shadow: 0 4px 20px var(--shadow); border: 2px solid #FFE0F2; }
+  .attendance-table thead tr { background: linear-gradient(135deg, var(--pink) 0%, var(--pink-deep) 100%); }
+  .attendance-table th { color: white; font-family: 'Jua', sans-serif; font-size: 14px; padding: 14px 10px; text-align: center; }
+  .attendance-table td { padding: 12px 10px; text-align: center; font-size: 14px; color: var(--text); border-bottom: 1.5px solid #FFE8F4; }
+  .attendance-table tr:last-child td { border-bottom: none; }
+  .attendance-table tr:nth-child(even) td { background: var(--pink-pale); }
+
+  .badge-class { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+  .badge-apple { background: #FFE0EC; color: #D42070; }
+  .badge-oak { background: #E0F5E0; color: #1A7A1A; }
+
+  .btn-delete {
+    background: none;
+    border: 1.5px solid #FFB3C8;
+    color: #E8429A;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: 'Nanum Gothic', sans-serif;
+    min-height: 36px;
+    touch-action: manipulation;
+  }
+
+  .empty-state { text-align: center; padding: 48px 20px; background: var(--white); border-radius: 20px; border: 2px dashed var(--pink-light); }
+  .empty-state .empty-icon { font-size: 48px; display: block; margin-bottom: 12px; }
+  .empty-state p { font-family: 'Jua', sans-serif; font-size: 18px; color: var(--text-light); }
+
+  .count-badge { background: var(--pink-pale); border: 2px solid var(--pink-light); color: var(--pink-deep); font-family: 'Jua', sans-serif; font-size: 14px; padding: 5px 14px; border-radius: 999px; }
+
+  .btn-clear {
+    background: none;
+    border: 1.5px solid #FFB3C8;
+    color: var(--text-light);
+    font-size: 13px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: 'Nanum Gothic', sans-serif;
+    min-height: 40px;
+    touch-action: manipulation;
+  }
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- 홈 -->
+<div class="page active" id="page-home">
+  <div class="top-bar">
+    <div class="top-logo"><span class="bounce">🩷</span> 하츄핑 출석부</div>
+  </div>
+  <div class="hero">
+    <span class="hero-icon">🌸</span>
+    <h1>출석부</h1>
+    <p>반, 번호, 이름을 입력해 주세요 💕</p>
+  </div>
+  <div class="card">
+    <div class="card-title">✏️ 출석 등록하기</div>
+    <div class="field">
+      <label>🌳 반 선택</label>
+      <div class="class-btns">
+        <button class="class-btn" id="btn-apple" type="button">
+          <span class="class-icon">🍎</span>사과나무반
+        </button>
+        <button class="class-btn" id="btn-oak" type="button">
+          <span class="class-icon">🌳</span>참나무반
+        </button>
+      </div>
+    </div>
+    <div class="field">
+      <label>🔢 번호</label>
+      <input type="number" id="inp-num" placeholder="번호를 입력해요" min="1" max="99" inputmode="numeric" />
+    </div>
+    <div class="field">
+      <label>👤 이름</label>
+      <input type="text" id="inp-name" placeholder="이름을 입력해요" maxlength="10" />
+    </div>
+    <button class="btn-submit" id="btn-submit" type="button">🩷 등록하기</button>
+  </div>
+  <button class="btn-list" id="btn-go-list" type="button">📋 전체 출석부 보기</button>
+</div>
+
+<!-- 출석부 -->
+<div class="page" id="page-list">
+  <div class="top-bar">
+    <div class="top-logo"><span class="bounce">🩷</span> 전체 출석부</div>
+    <button class="btn-back" id="btn-back" type="button">← 홈으로</button>
+  </div>
+  <div class="list-header">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <span class="list-title">출석부 📋</span>
+      <span class="count-badge" id="total-count">0명</span>
+    </div>
+    <button class="btn-clear" id="btn-clear" type="button">🗑️ 전체 삭제</button>
+  </div>
+  <div class="filter-tabs">
+    <button class="filter-tab active" data-filter="전체" type="button">🌸 전체</button>
+    <button class="filter-tab" data-filter="사과나무반" type="button">🍎 사과나무반</button>
+    <button class="filter-tab" data-filter="참나무반" type="button">🌳 참나무반</button>
+  </div>
+  <div id="list-area"></div>
+</div>
+
+<script>
+(function() {
+  var selectedClass = '';
+  var currentFilter = '전체';
+
+  function getStudents() {
+    try { return JSON.parse(localStorage.getItem('hachupingStudents') || '[]'); }
+    catch(e) { return []; }
+  }
+  function saveStudents(list) {
+    localStorage.setItem('hachupingStudents', JSON.stringify(list));
+  }
+
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    clearTimeout(t._timer);
+    t._timer = setTimeout(function() { t.style.display = 'none'; }, 2200);
+  }
+
+  function selectClass(cls) {
+    selectedClass = cls;
+    document.getElementById('btn-apple').classList.toggle('selected', cls === '사과나무반');
+    document.getElementById('btn-oak').classList.toggle('selected', cls === '참나무반');
+  }
+
+  function addStudent() {
+    if (!selectedClass) { showToast('⚠️ 반을 먼저 선택해 주세요!'); return; }
+    var num = document.getElementById('inp-num').value.trim();
+    var name = document.getElementById('inp-name').value.trim();
+    if (!num) { showToast('⚠️ 번호를 입력해 주세요!'); return; }
+    if (!name) { showToast('⚠️ 이름을 입력해 주세요!'); return; }
+
+    var list = getStudents();
+    list.push({ cls: selectedClass, num: parseInt(num), name: name, id: Date.now() });
+    list.sort(function(a, b) {
+      if (a.cls !== b.cls) return a.cls < b.cls ? -1 : 1;
+      return a.num - b.num;
+    });
+    saveStudents(list);
+    showToast('🩷 ' + name + ' 등록 완료!');
+    document.getElementById('inp-num').value = '';
+    document.getElementById('inp-name').value = '';
+    selectedClass = '';
+    document.getElementById('btn-apple').classList.remove('selected');
+    document.getElementById('btn-oak').classList.remove('selected');
+  }
+
+  function goList() {
+    document.getElementById('page-home').classList.remove('active');
+    document.getElementById('page-list').classList.add('active');
+    renderList();
+    window.scrollTo(0, 0);
+  }
+
+  function goHome() {
+    document.getElementById('page-list').classList.remove('active');
+    document.getElementById('page-home').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function setFilter(f) {
+    currentFilter = f;
+    document.querySelectorAll('.filter-tab').forEach(function(btn) {
+      btn.classList.toggle('active', btn.dataset.filter === f);
+    });
+    renderList();
+  }
+
+  function deleteStudent(id) {
+    var list = getStudents().filter(function(s) { return s.id !== id; });
+    saveStudents(list);
+    renderList();
+  }
+
+  function renderList() {
+    var all = getStudents();
+    var list = currentFilter === '전체' ? all : all.filter(function(s) { return s.cls === currentFilter; });
+    document.getElementById('total-count').textContent = all.length + '명';
+    var area = document.getElementById('list-area');
+    if (list.length === 0) {
+      area.innerHTML = '<div class="empty-state"><span class="empty-icon">🌸</span><p>아직 등록된 학생이 없어요!</p></div>';
+      return;
+    }
+    var rows = list.map(function(s, i) {
+      var badgeClass = s.cls === '사과나무반' ? 'badge-apple' : 'badge-oak';
+      var icon = s.cls === '사과나무반' ? '🍎' : '🌳';
+      return '<tr>'
+        + '<td>' + (i+1) + '</td>'
+        + '<td><span class="badge-class ' + badgeClass + '">' + icon + ' ' + s.cls + '</span></td>'
+        + '<td>' + s.num + '</td>'
+        + '<td><strong>' + s.name + '</strong></td>'
+        + '<td><button class="btn-delete" type="button" data-id="' + s.id + '">삭제</button></td>'
+        + '</tr>';
+    }).join('');
+    area.innerHTML = '<table class="attendance-table"><thead><tr><th>#</th><th>반</th><th>번호</th><th>이름</th><th></th></tr></thead><tbody>' + rows + '</tbody></table>';
+
+    // 삭제 버튼 이벤트 (동적 생성 요소이므로 여기서 등록)
+    area.querySelectorAll('.btn-delete').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        deleteStudent(Number(this.dataset.id));
+      });
+    });
+  }
+
+  // 이벤트 등록
+  document.getElementById('btn-apple').addEventListener('click', function() { selectClass('사과나무반'); });
+  document.getElementById('btn-oak').addEventListener('click', function() { selectClass('참나무반'); });
+  document.getElementById('btn-submit').addEventListener('click', addStudent);
+  document.getElementById('btn-go-list').addEventListener('click', goList);
+  document.getElementById('btn-back').addEventListener('click', goHome);
+  document.getElementById('btn-clear').addEventListener('click', function() {
+    if (confirm('정말 전체 출석부를 삭제할까요? 😢')) { saveStudents([]); renderList(); }
+  });
+
+  document.querySelectorAll('.filter-tab').forEach(function(btn) {
+    btn.addEventListener('click', function() { setFilter(this.dataset.filter); });
+  });
+
+  document.getElementById('inp-num').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') document.getElementById('inp-name').focus();
+  });
+  document.getElementById('inp-name').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') addStudent();
+  });
+})();
+</script>
+</body>
+</html>

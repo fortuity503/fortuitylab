@@ -2,417 +2,836 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>🩷 하츄핑 출석부</title>
-<link href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Gothic:wght@400;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>fortuity — 기능성 게임이 만들어가는 사회적 가치</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Playfair+Display:ital,wght@1,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --pink: #FF6EB4;
-    --pink-light: #FFB3D9;
-    --pink-pale: #FFF0F8;
-    --pink-deep: #E8429A;
-    --yellow: #FFE066;
-    --yellow-light: #FFF8CC;
-    --white: #FFFFFF;
-    --text: #5A2D5A;
-    --text-light: #A06080;
-    --shadow: rgba(255,110,180,0.2);
-  }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  body {
-    background: var(--pink-pale);
-    font-family: 'Nanum Gothic', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-    -webkit-text-size-adjust: 100%;
-  }
-  body::before {
-    content: '';
-    position: fixed;
-    width: 400px; height: 400px;
-    background: radial-gradient(circle, #FFD6EC 0%, transparent 70%);
-    top: -100px; right: -100px;
-    border-radius: 50%;
-    pointer-events: none; z-index: 0;
-  }
-  body::after {
-    content: '';
-    position: fixed;
-    width: 350px; height: 350px;
-    background: radial-gradient(circle, #D6F5FF 0%, transparent 70%);
-    bottom: -80px; left: -80px;
-    border-radius: 50%;
-    pointer-events: none; z-index: 0;
-  }
+:root{
+  --bg:#fafaf8;
+  --bg2:#f4f3ef;
+  --white:#ffffff;
+  --accent:#4f46e5;
+  --accent-light:#eef2ff;
+  --accent-mid:rgba(79,70,229,0.12);
+  --accent2:#16a34a;
+  --accent2-light:#f0fdf4;
+  --text:#111118;
+  --text-mid:#52526e;
+  --text-muted:#a0a0b8;
+  --border:rgba(0,0,0,0.07);
+  --border-strong:rgba(0,0,0,0.12);
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.07),0 1px 4px rgba(0,0,0,0.04);
+  --shadow-lg:0 12px 40px rgba(0,0,0,0.1),0 2px 8px rgba(0,0,0,0.04);
+  --shadow-accent:0 6px 24px rgba(79,70,229,0.22);
+  --r:14px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Noto Sans KR',sans-serif;
+  font-weight:300;
+  overflow-x:hidden;
+  word-break:keep-all;
+  overflow-wrap:break-word;
+  -webkit-font-smoothing:antialiased;
+}
 
-  .page { display: none; position: relative; z-index: 1; max-width: 520px; margin: 0 auto; padding: 24px 20px 60px; }
-  .page.active { display: block; }
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;height:58px;
+  background:rgba(250,250,248,0.88);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{
+  font-family:'IBM Plex Mono',monospace;
+  font-weight:500;font-size:16px;
+  color:var(--text);letter-spacing:-0.01em;
+  display:flex;align-items:center;gap:6px;
+}
+.nav-dot{
+  width:6px;height:6px;
+  background:var(--accent);border-radius:50%;
+  display:inline-block;flex-shrink:0;
+}
+.nav-links{display:flex;gap:28px;list-style:none;}
+.nav-links a{
+  color:var(--text-muted);font-size:13px;text-decoration:none;
+  transition:color 0.18s;letter-spacing:0.01em;font-weight:400;
+}
+.nav-links a:hover{color:var(--accent);}
+.nav-cta{
+  background:var(--accent);color:#fff;
+  border:none;padding:7px 20px;
+  font-family:'Noto Sans KR',sans-serif;
+  font-size:12px;font-weight:500;
+  border-radius:99px;cursor:pointer;
+  text-decoration:none;
+  letter-spacing:0.03em;
+  transition:box-shadow 0.18s,transform 0.15s;
+  box-shadow:var(--shadow-accent);
+  flex-shrink:0;
+}
+.nav-cta:hover{box-shadow:0 8px 28px rgba(79,70,229,0.32);transform:translateY(-1px);}
 
-  .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
-  .top-logo { font-family: 'Jua', sans-serif; font-size: 20px; color: var(--pink-deep); display: flex; align-items: center; gap: 6px; }
-  .bounce { display: inline-block; animation: bounce 2s ease-in-out infinite; }
-  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+/* HERO */
+.hero{
+  position:relative;
+  min-height:100vh;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:100px 48px 80px;
+  max-width:1120px;margin:0 auto;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--accent-light);
+  border:1px solid rgba(79,70,229,0.18);
+  border-radius:99px;
+  padding:5px 14px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;color:var(--accent);
+  letter-spacing:0.07em;font-weight:400;
+  margin-bottom:36px;width:fit-content;
+}
+.hero-badge-dot{
+  width:5px;height:5px;
+  background:var(--accent2);border-radius:50%;
+  animation:pulse 2.4s ease-in-out infinite;
+  flex-shrink:0;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.35;transform:scale(0.65)}}
 
-  .btn-back {
-    background: var(--white);
-    border: 2px solid var(--pink-light);
-    color: var(--pink-deep);
-    font-family: 'Jua', sans-serif;
-    font-size: 14px;
-    padding: 10px 18px;
-    border-radius: 999px;
-    cursor: pointer;
-    min-height: 44px;
-    touch-action: manipulation;
-  }
+.hero-h{
+  font-size:clamp(48px,7.5vw,100px);
+  font-weight:700;line-height:1.02;
+  letter-spacing:-0.04em;
+  margin-bottom:32px;
+  word-break:keep-all;
+}
+.hero-h .hl{
+  background:linear-gradient(125deg,var(--accent) 10%,#818cf8 60%,#a5b4fc 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero-desc{
+  font-size:17px;color:var(--text-mid);
+  line-height:1.9;max-width:480px;
+  margin-bottom:44px;font-weight:300;
+  word-break:keep-all;
+}
+.hero-btns{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.btn-fill{
+  background:var(--accent);color:#fff;
+  border:none;padding:14px 34px;
+  font-family:'Noto Sans KR',sans-serif;
+  font-size:14px;font-weight:500;
+  cursor:pointer;border-radius:99px;
+  text-decoration:none;display:inline-block;
+  transition:box-shadow 0.18s,transform 0.15s;
+  box-shadow:var(--shadow-accent);
+  word-break:keep-all;flex-shrink:0;
+}
+.btn-fill:hover{box-shadow:0 8px 32px rgba(79,70,229,0.3);transform:translateY(-2px);}
+.btn-line{
+  background:var(--white);color:var(--text-mid);
+  border:1px solid var(--border-strong);
+  padding:13px 30px;font-family:'Noto Sans KR',sans-serif;
+  font-size:14px;font-weight:300;
+  cursor:pointer;border-radius:99px;
+  text-decoration:none;display:inline-block;
+  transition:border-color 0.18s,transform 0.15s,box-shadow 0.18s;
+  box-shadow:var(--shadow-sm);
+  word-break:keep-all;flex-shrink:0;
+}
+.btn-line:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-md);}
 
-  .hero { text-align: center; padding: 20px 0 32px; }
-  .hero-icon { font-size: 72px; display: block; animation: bounce 2s ease-in-out infinite; margin-bottom: 12px; }
-  .hero h1 { font-family: 'Jua', sans-serif; font-size: 36px; color: var(--pink-deep); text-shadow: 3px 3px 0 var(--pink-light); margin-bottom: 8px; }
-  .hero p { font-size: 14px; color: var(--text-light); }
+.hero-stats{
+  display:flex;gap:0;
+  margin-top:64px;
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+.hero-stat{
+  flex:1;padding:24px 28px;
+  border-right:1px solid var(--border);
+  transition:background 0.18s;
+}
+.hero-stat:last-child{border-right:none;}
+.hero-stat:hover{background:var(--accent-light);}
+.hero-stat-n{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:28px;font-weight:500;
+  color:var(--accent);letter-spacing:-0.02em;
+  line-height:1;margin-bottom:5px;
+}
+.hero-stat-l{font-size:12px;color:var(--text-muted);word-break:keep-all;}
 
-  .card { background: var(--white); border-radius: 24px; padding: 28px 24px; box-shadow: 0 8px 32px var(--shadow); border: 2px solid #FFE0F2; margin-bottom: 16px; animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both; }
-  @keyframes popIn { from{opacity:0;transform:scale(0.93)} to{opacity:1;transform:scale(1)} }
+/* SECTION */
+section{position:relative;}
+.wrap{max-width:1120px;margin:0 auto;padding:96px 48px;}
 
-  .card-title { font-family: 'Jua', sans-serif; font-size: 18px; color: var(--pink-deep); margin-bottom: 20px; display: flex; align-items: center; gap: 6px; }
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;letter-spacing:0.3em;
+  color:var(--accent);text-transform:uppercase;
+  margin-bottom:16px;font-weight:500;
+}
+.sec-h{
+  font-size:clamp(30px,4vw,48px);
+  font-weight:700;line-height:1.15;
+  letter-spacing:-0.03em;margin-bottom:16px;
+  word-break:keep-all;
+}
+.sec-p{
+  font-size:16px;color:var(--text-mid);
+  line-height:1.9;max-width:500px;margin-bottom:56px;
+  font-weight:300;word-break:keep-all;
+}
 
-  .field { margin-bottom: 18px; }
-  .field label { display: block; font-size: 13px; font-weight: 700; color: var(--text-light); margin-bottom: 7px; letter-spacing: 0.04em; }
-  .field input {
-    width: 100%;
-    border: 2.5px solid var(--pink-light);
-    border-radius: 14px;
-    padding: 14px 16px;
-    font-size: 16px;
-    font-family: 'Nanum Gothic', sans-serif;
-    color: var(--text);
-    background: var(--pink-pale);
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    -webkit-appearance: none;
-  }
-  .field input:focus { border-color: var(--pink); background: var(--white); box-shadow: 0 0 0 4px rgba(255,110,180,0.13); }
-  .field input::placeholder { color: var(--text-light); opacity: 0.7; }
+.divider{height:1px;background:var(--border);margin:0 48px;}
 
-  .class-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .class-btn {
-    background: var(--pink-pale);
-    border: 2.5px solid var(--pink-light);
-    border-radius: 14px;
-    padding: 16px 10px;
-    font-family: 'Jua', sans-serif;
-    font-size: 16px;
-    color: var(--text-light);
-    cursor: pointer;
-    text-align: center;
-    min-height: 80px;
-    touch-action: manipulation;
-    transition: all 0.18s;
-    -webkit-appearance: none;
-  }
-  .class-btn .class-icon { font-size: 28px; display: block; margin-bottom: 4px; pointer-events: none; }
-  .class-btn.selected { background: linear-gradient(135deg, var(--pink-light), #FFD6EC); border-color: var(--pink); color: var(--pink-deep); box-shadow: 0 4px 12px var(--shadow); }
+/* ABOUT */
+.about-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+.about-card{
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:40px 32px;
+  box-shadow:var(--shadow-sm);
+  transition:box-shadow 0.2s,transform 0.2s,border-color 0.2s;
+  position:relative;overflow:hidden;
+}
+.about-card::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:2px;
+  opacity:0;transition:opacity 0.2s;
+}
+.about-card:nth-child(1)::before{background:var(--accent);}
+.about-card:nth-child(2)::before{background:#818cf8;}
+.about-card:nth-child(3)::before{background:var(--accent2);}
+.about-card:hover{
+  box-shadow:var(--shadow-md);
+  transform:translateY(-4px);
+  border-color:rgba(79,70,229,0.18);
+}
+.about-card:hover::before{opacity:1;}
+.ac-num{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;font-weight:500;
+  color:var(--accent);letter-spacing:0.15em;
+  margin-bottom:20px;display:block;
+}
+.about-card:nth-child(2) .ac-num{color:#818cf8;}
+.about-card:nth-child(3) .ac-num{color:var(--accent2);}
+.about-card h3{
+  font-size:18px;font-weight:700;
+  margin-bottom:10px;line-height:1.35;
+  word-break:keep-all;
+}
+.about-card p{font-size:14px;color:var(--text-mid);line-height:1.8;word-break:keep-all;}
 
-  .btn-submit {
-    width: 100%;
-    background: linear-gradient(135deg, var(--pink) 0%, var(--pink-deep) 100%);
-    color: white;
-    border: none;
-    border-radius: 16px;
-    padding: 18px;
-    font-family: 'Jua', sans-serif;
-    font-size: 18px;
-    cursor: pointer;
-    box-shadow: 0 6px 20px var(--shadow);
-    margin-top: 4px;
-    min-height: 56px;
-    touch-action: manipulation;
-    -webkit-appearance: none;
-  }
+/* MISSION */
+.mission{
+  margin-top:12px;
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:var(--r);padding:64px;
+  position:relative;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+.mission-deco{
+  position:absolute;right:56px;top:16px;
+  font-family:'Playfair Display',serif;
+  font-style:italic;
+  font-size:200px;font-weight:700;
+  color:var(--accent);opacity:0.04;
+  pointer-events:none;user-select:none;line-height:1;
+}
+.mission-q{
+  font-size:clamp(19px,2.6vw,28px);
+  font-weight:500;line-height:1.65;
+  letter-spacing:-0.01em;
+  position:relative;z-index:1;
+  word-break:keep-all;
+}
+.mission-q em{font-style:normal;color:var(--accent);}
+.mission-src{
+  margin-top:24px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;color:var(--text-muted);
+  letter-spacing:0.1em;position:relative;z-index:1;
+}
 
-  .btn-list {
-    width: 100%;
-    background: var(--white);
-    color: var(--pink-deep);
-    border: 2.5px solid var(--pink-light);
-    border-radius: 16px;
-    padding: 16px;
-    font-family: 'Jua', sans-serif;
-    font-size: 16px;
-    cursor: pointer;
-    text-align: center;
-    min-height: 52px;
-    touch-action: manipulation;
-    -webkit-appearance: none;
-  }
+/* STRUCTURE */
+#structure{background:var(--bg2);}
+.struct-row{
+  display:grid;
+  grid-template-columns:1fr 52px 1fr;
+  align-items:center;
+  margin-bottom:32px;
+}
+.struct-card{
+  background:var(--white);border:1px solid var(--border);
+  padding:36px 32px;border-radius:var(--r);
+  box-shadow:var(--shadow-sm);
+}
+.sc-tag{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;letter-spacing:0.2em;
+  color:var(--accent);text-transform:uppercase;
+  margin-bottom:12px;display:block;font-weight:500;
+}
+.struct-card h3{font-size:19px;font-weight:700;margin-bottom:10px;word-break:keep-all;}
+.struct-card p{font-size:14px;color:var(--text-mid);line-height:1.8;word-break:keep-all;}
+.struct-arrow{display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:20px;}
 
-  .toast {
-    display: none;
-    position: fixed;
-    top: 24px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: linear-gradient(135deg, var(--pink), var(--pink-deep));
-    color: white;
-    font-family: 'Jua', sans-serif;
-    font-size: 16px;
-    padding: 14px 28px;
-    border-radius: 999px;
-    box-shadow: 0 8px 24px var(--shadow);
-    z-index: 9999;
-    white-space: nowrap;
-  }
+.teams-label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;letter-spacing:0.25em;
+  color:var(--text-muted);text-transform:uppercase;
+  margin-bottom:12px;font-weight:400;
+}
+.teams-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.team-chip{
+  background:var(--white);border:1px solid var(--border);
+  padding:18px 20px;border-radius:12px;
+  box-shadow:var(--shadow-sm);
+  transition:border-color 0.18s,transform 0.18s,box-shadow 0.18s;
+}
+.team-chip:hover{
+  border-color:rgba(79,70,229,0.3);
+  transform:translateY(-3px);
+  box-shadow:var(--shadow-md);
+}
+.team-chip-name{font-size:14px;font-weight:700;margin-bottom:4px;word-break:keep-all;}
+.team-chip-desc{font-size:12px;color:var(--text-muted);line-height:1.6;word-break:keep-all;}
 
-  .list-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
-  .list-title { font-family: 'Jua', sans-serif; font-size: 22px; color: var(--pink-deep); }
+/* ROADMAP */
+.roadmap-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+.rs{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:var(--r);padding:40px 32px;
+  position:relative;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+  transition:box-shadow 0.2s,transform 0.2s;
+}
+.rs:hover{box-shadow:var(--shadow-md);transform:translateY(-4px);}
+.rs-bar{
+  position:absolute;top:0;left:0;right:0;height:3px;
+  border-radius:var(--r) var(--r) 0 0;
+}
+.rs:nth-child(1) .rs-bar{background:linear-gradient(90deg,var(--accent),#818cf8);}
+.rs:nth-child(2) .rs-bar{background:linear-gradient(90deg,#818cf8,#a5b4fc);}
+.rs:nth-child(3) .rs-bar{background:linear-gradient(90deg,var(--accent2),#4ade80);}
+.rs-num{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;letter-spacing:0.25em;
+  color:var(--accent);margin-bottom:16px;
+  display:block;font-weight:500;
+}
+.rs:nth-child(2) .rs-num{color:#818cf8;}
+.rs:nth-child(3) .rs-num{color:var(--accent2);}
+.rs-title{
+  font-size:17px;font-weight:700;
+  margin-bottom:5px;line-height:1.4;
+  word-break:keep-all;
+}
+.rs-period{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;color:var(--text-muted);
+  margin-bottom:20px;letter-spacing:0.05em;
+}
+.rs-items{list-style:none;}
+.rs-items li{
+  font-size:13px;color:var(--text-mid);
+  padding:7px 0 7px 13px;
+  border-bottom:1px solid var(--border);
+  line-height:1.6;position:relative;
+  word-break:keep-all;
+}
+.rs-items li:last-child{border-bottom:none;}
+.rs-items li::before{
+  content:'';position:absolute;
+  left:0;top:16px;
+  width:4px;height:1.5px;background:var(--accent);border-radius:2px;
+}
+.rs:nth-child(2) .rs-items li::before{background:#818cf8;}
+.rs:nth-child(3) .rs-items li::before{background:var(--accent2);}
 
-  .filter-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-  .filter-tab {
-    background: var(--white);
-    border: 2px solid var(--pink-light);
-    color: var(--text-light);
-    font-family: 'Jua', sans-serif;
-    font-size: 14px;
-    padding: 10px 18px;
-    border-radius: 999px;
-    cursor: pointer;
-    min-height: 44px;
-    touch-action: manipulation;
-    -webkit-appearance: none;
-  }
-  .filter-tab.active { background: var(--pink); border-color: var(--pink); color: white; box-shadow: 0 3px 10px var(--shadow); }
+/* GAMES */
+#games{background:var(--bg2);}
+.games-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:14px;margin-bottom:32px;
+}
+.game-card{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;
+  box-shadow:var(--shadow-sm);
+  transition:border-color 0.2s,transform 0.2s,box-shadow 0.2s;
+}
+.game-card:hover{
+  border-color:rgba(79,70,229,0.25);
+  transform:translateY(-5px);
+  box-shadow:var(--shadow-lg);
+}
+.game-img-wrap{
+  width:100%;height:184px;
+  background:linear-gradient(135deg,var(--accent-light),var(--accent2-light));
+  display:flex;align-items:center;justify-content:center;
+  font-size:52px;overflow:hidden;
+}
+.game-img-wrap img{width:100%;height:100%;object-fit:cover;}
+.game-body{padding:24px;}
+.game-name{font-size:17px;font-weight:700;margin-bottom:7px;word-break:keep-all;}
+.game-desc{font-size:13px;color:var(--text-mid);line-height:1.8;word-break:keep-all;}
+.game-controls{
+  display:flex;gap:7px;margin-top:16px;
+  padding-top:14px;border-top:1px solid var(--border);
+}
+.btn-eg,.btn-dg{
+  background:none;font-size:12px;
+  padding:5px 13px;border-radius:99px;
+  cursor:pointer;font-family:'Noto Sans KR',sans-serif;
+  transition:all 0.15s;border:1px solid var(--border);font-weight:400;
+}
+.btn-eg{color:var(--text-muted);}
+.btn-eg:hover{color:var(--accent);border-color:rgba(79,70,229,0.3);background:var(--accent-light);}
+.btn-dg{color:rgba(185,28,28,0.45);}
+.btn-dg:hover{color:#b91c1c;border-color:rgba(185,28,28,0.25);background:#fff1f2;}
+.game-empty{
+  text-align:center;padding:64px 20px;
+  color:var(--text-muted);font-size:14px;
+  border:1.5px dashed var(--border-strong);
+  border-radius:var(--r);line-height:1.8;
+  word-break:keep-all;
+}
+.game-empty-icon{font-size:38px;display:block;margin-bottom:12px;opacity:0.4;}
 
-  .attendance-table { width: 100%; border-collapse: collapse; background: var(--white); border-radius: 18px; overflow: hidden; box-shadow: 0 4px 20px var(--shadow); border: 2px solid #FFE0F2; }
-  .attendance-table thead tr { background: linear-gradient(135deg, var(--pink) 0%, var(--pink-deep) 100%); }
-  .attendance-table th { color: white; font-family: 'Jua', sans-serif; font-size: 14px; padding: 14px 10px; text-align: center; }
-  .attendance-table td { padding: 12px 10px; text-align: center; font-size: 14px; color: var(--text); border-bottom: 1.5px solid #FFE8F4; }
-  .attendance-table tr:last-child td { border-bottom: none; }
-  .attendance-table tr:nth-child(even) td { background: var(--pink-pale); }
+/* ADD FORM */
+.add-form{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:var(--r);padding:44px;
+  box-shadow:var(--shadow-sm);
+}
+.form-tag{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;color:var(--accent);
+  letter-spacing:0.22em;margin-bottom:7px;display:block;font-weight:500;
+}
+.form-title{font-size:21px;font-weight:700;margin-bottom:28px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.field{display:flex;flex-direction:column;gap:7px;}
+.field.full{grid-column:1/-1;}
+.field label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;letter-spacing:0.2em;
+  color:var(--text-muted);text-transform:uppercase;font-weight:400;
+}
+.field input,.field textarea{
+  background:var(--bg);
+  border:1px solid var(--border-strong);
+  border-radius:10px;padding:12px 15px;
+  font-size:14px;font-family:'Noto Sans KR',sans-serif;
+  color:var(--text);outline:none;
+  transition:border-color 0.18s,box-shadow 0.18s,background 0.18s;
+  font-weight:300;
+}
+.field input:focus,.field textarea:focus{
+  border-color:rgba(79,70,229,0.45);
+  background:var(--white);
+  box-shadow:0 0 0 3px rgba(79,70,229,0.08);
+}
+.field input::placeholder,.field textarea::placeholder{color:var(--text-muted);opacity:0.55;}
+.field textarea{resize:vertical;min-height:86px;}
+.form-actions{display:flex;gap:10px;margin-top:6px;flex-wrap:wrap;}
+.btn-submit{
+  background:var(--accent);color:#fff;border:none;
+  padding:12px 30px;font-family:'Noto Sans KR',sans-serif;
+  font-size:13px;font-weight:500;cursor:pointer;border-radius:99px;
+  transition:box-shadow 0.18s,transform 0.15s;
+  box-shadow:var(--shadow-accent);
+  word-break:keep-all;flex-shrink:0;
+}
+.btn-submit:hover{box-shadow:0 8px 28px rgba(79,70,229,0.3);transform:translateY(-1px);}
+.btn-cancel{
+  display:none;background:none;color:var(--text-muted);
+  border:1px solid var(--border-strong);
+  padding:11px 22px;font-family:'Noto Sans KR',sans-serif;
+  font-size:13px;cursor:pointer;border-radius:99px;
+  transition:border-color 0.18s,color 0.18s;
+  word-break:keep-all;flex-shrink:0;
+}
+.btn-cancel:hover{border-color:var(--accent);color:var(--accent);}
 
-  .badge-class { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
-  .badge-apple { background: #FFE0EC; color: #D42070; }
-  .badge-oak { background: #E0F5E0; color: #1A7A1A; }
+/* TOAST */
+.toast{
+  position:fixed;bottom:28px;right:28px;z-index:999;
+  background:var(--text);color:#fff;
+  font-family:'Noto Sans KR',sans-serif;
+  font-size:13px;font-weight:500;
+  padding:12px 22px;border-radius:99px;
+  display:none;
+  box-shadow:0 8px 32px rgba(0,0,0,0.18);
+  word-break:keep-all;
+}
 
-  .btn-delete {
-    background: none;
-    border: 1.5px solid #FFB3C8;
-    color: #E8429A;
-    border-radius: 8px;
-    padding: 6px 12px;
-    font-size: 13px;
-    cursor: pointer;
-    font-family: 'Nanum Gothic', sans-serif;
-    min-height: 36px;
-    touch-action: manipulation;
-  }
+/* FOOTER */
+footer{
+  border-top:1px solid var(--border);
+  padding:48px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:20px;
+}
+.footer-logo{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:16px;font-weight:500;
+  color:var(--text);display:flex;align-items:center;gap:6px;
+}
+.footer-info{font-size:13px;color:var(--text-muted);line-height:1.8;text-align:right;word-break:keep-all;}
 
-  .empty-state { text-align: center; padding: 48px 20px; background: var(--white); border-radius: 20px; border: 2px dashed var(--pink-light); }
-  .empty-state .empty-icon { font-size: 48px; display: block; margin-bottom: 12px; }
-  .empty-state p { font-family: 'Jua', sans-serif; font-size: 18px; color: var(--text-light); }
-
-  .count-badge { background: var(--pink-pale); border: 2px solid var(--pink-light); color: var(--pink-deep); font-family: 'Jua', sans-serif; font-size: 14px; padding: 5px 14px; border-radius: 999px; }
-
-  .btn-clear {
-    background: none;
-    border: 1.5px solid #FFB3C8;
-    color: var(--text-light);
-    font-size: 13px;
-    padding: 8px 14px;
-    border-radius: 999px;
-    cursor: pointer;
-    font-family: 'Nanum Gothic', sans-serif;
-    min-height: 40px;
-    touch-action: manipulation;
-  }
+@media(max-width:900px){
+  nav{padding:0 20px;}
+  .nav-links,.nav-cta{display:none;}
+  .hero,.wrap{padding-left:20px;padding-right:20px;}
+  .hero-h{font-size:clamp(36px,10vw,60px);}
+  .hero-stats{flex-direction:column;}
+  .hero-stat{border-right:none;border-bottom:1px solid var(--border);}
+  .hero-stat:last-child{border-bottom:none;}
+  .about-grid,.roadmap-grid{grid-template-columns:1fr;}
+  .struct-row{grid-template-columns:1fr;gap:12px;}
+  .struct-arrow{transform:rotate(90deg);height:32px;}
+  .teams-grid{grid-template-columns:1fr 1fr;}
+  .form-grid{grid-template-columns:1fr;}
+  .mission{padding:36px 24px;}
+  .add-form{padding:28px 20px;}
+  footer{padding:32px 20px;}
+  .footer-info{text-align:left;}
+  .divider{margin:0 20px;}
+}
 </style>
 </head>
 <body>
 
 <div class="toast" id="toast"></div>
 
-<!-- 홈 -->
-<div class="page active" id="page-home">
-  <div class="top-bar">
-    <div class="top-logo"><span class="bounce">🩷</span> 하츄핑 출석부</div>
+<nav>
+  <div class="nav-logo">fortuity<div class="nav-dot"></div></div>
+  <ul class="nav-links">
+    <li><a href="#about">소개</a></li>
+    <li><a href="#structure">조직</a></li>
+    <li><a href="#roadmap">로드맵</a></li>
+    <li><a href="#games">게임</a></li>
+  </ul>
+  <a href="#games" class="nav-cta">게임 보기</a>
+</nav>
+
+<!-- HERO -->
+<section>
+<div class="hero">
+  <div class="hero-badge">
+    <div class="hero-badge-dot"></div>
+    빈곤 포르노 없는 NGO 만들기
   </div>
-  <div class="hero">
-    <span class="hero-icon">🌸</span>
-    <h1>출석부</h1>
-    <p>반, 번호, 이름을 입력해 주세요 💕</p>
+  <h1 class="hero-h">
+    기능성 게임이<br>
+    만들어가는<br>
+    <span class="hl">사회적 가치</span>
+  </h1>
+  <p class="hero-desc">폴투이티는 우연성이 만들어낸 사회적 불평등을 게임을 통해 인식하고 변화를 이끄는 새로운 형태의 NGO입니다.</p>
+  <div class="hero-btns">
+    <a href="#about" class="btn-fill">더 알아보기</a>
+    <a href="#games" class="btn-line">게임 보기 →</a>
   </div>
-  <div class="card">
-    <div class="card-title">✏️ 출석 등록하기</div>
-    <div class="field">
-      <label>🌳 반 선택</label>
-      <div class="class-btns">
-        <button class="class-btn" id="btn-apple" type="button">
-          <span class="class-icon">🍎</span>사과나무반
-        </button>
-        <button class="class-btn" id="btn-oak" type="button">
-          <span class="class-icon">🌳</span>참나무반
-        </button>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-n">3단계</div>
+      <div class="hero-stat-l">정착 로드맵</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-n">6개</div>
+      <div class="hero-stat-l">전문 팀 구성</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-n">0원</div>
+      <div class="hero-stat-l">빈곤 포르노 사용</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ABOUT -->
+<section id="about">
+<div class="wrap">
+  <div class="eyebrow">About Fortuity</div>
+  <h2 class="sec-h">우연성이 만든 불평등,<br>게임으로 바꾼다</h2>
+  <p class="sec-p">선천적·환경적 우연성으로 인한 불평등은 개인의 의지와 무관합니다. 폴투이티는 이 구조를 게임으로 인식시킵니다.</p>
+
+  <div class="about-grid">
+    <div class="about-card">
+      <span class="ac-num">01</span>
+      <h3>동정심 유도 모금은 그만</h3>
+      <p>빈곤 포르노는 가난한 이들을 착취적·선정적으로 묘사해 동정심을 유발합니다. 폴투이티는 이 방식을 완전히 거부합니다.</p>
+    </div>
+    <div class="about-card">
+      <span class="ac-num">02</span>
+      <h3>우연성이 만든 불평등 인식</h3>
+      <p>불리한 우연성을 타고난 사람들은 의지와 무관하게 책임을 집니다. 이 불합리함을 인식하는 것이 진정한 나눔의 시작입니다.</p>
+    </div>
+    <div class="about-card">
+      <span class="ac-num">03</span>
+      <h3>게임으로 인식하고 실천</h3>
+      <p>대중은 재미를 느끼는 게임을 플레이하는 것만으로 모금에 기여합니다. 기능성 게임이 사회적 가치를 자연스럽게 전달합니다.</p>
+    </div>
+  </div>
+
+  <div class="mission">
+    <div class="mission-q">
+      "나눔은 동정심에 의한 것이 아닌,<br>
+      <em>우연성이 만들어낸 불합리한 사회에서<br>마땅히 실천해야 하는 것</em>이라는<br>
+      메시지를 전달합니다."
+    </div>
+    <div class="mission-src">— Fortuity 핵심 모토</div>
+  </div>
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- STRUCTURE -->
+<section id="structure">
+<div class="wrap">
+  <div class="eyebrow">Organization</div>
+  <h2 class="sec-h">조직 구조</h2>
+  <p class="sec-p">주식회사 폴투이티가 수익을 창출하고, 비영리재단이 해외 복지사업을 수행합니다.</p>
+
+  <div class="struct-row">
+    <div class="struct-card">
+      <span class="sc-tag">영리법인</span>
+      <h3>주식회사 폴투이티</h3>
+      <p>기능성 보드게임 카페 운영, 기능성 모바일 게임 개발을 통해 수익을 창출합니다. 운영비를 제외한 모든 수익을 매달 비영리재단에 기부합니다.</p>
+    </div>
+    <div class="struct-arrow">→</div>
+    <div class="struct-card">
+      <span class="sc-tag">비영리재단</span>
+      <h3>폴투이티 인터내셔널</h3>
+      <p>저소득국 초중등학교·특수학교 설립, 의료진 교육, 난민 인권 보호 사업을 수행합니다. 일회성 시혜가 아닌 현지 자립을 촉진합니다.</p>
+    </div>
+  </div>
+
+  <div class="teams-label">팀 구성</div>
+  <div class="teams-grid">
+    <div class="team-chip"><div class="team-chip-name">🎲 보드게임팀</div><div class="team-chip-desc">기능성 보드게임 개발 및 카페 운영</div></div>
+    <div class="team-chip"><div class="team-chip-name">📱 모바일 게임팀</div><div class="team-chip-desc">기능성 모바일 게임 개발 및 운영</div></div>
+    <div class="team-chip"><div class="team-chip-name">📣 홍보팀</div><div class="team-chip-desc">보드게임카페 및 게임 홍보</div></div>
+    <div class="team-chip"><div class="team-chip-name">📋 사업 기획팀</div><div class="team-chip-desc">지속가능성 중심의 해외사업 기획</div></div>
+    <div class="team-chip"><div class="team-chip-name">🌍 사업 수행팀</div><div class="team-chip-desc">현지 파견 해외사업 수행</div></div>
+    <div class="team-chip"><div class="team-chip-name">💝 게임 외 모금팀</div><div class="team-chip-desc">가치 공감 후원자 직접 모금 관리</div></div>
+  </div>
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ROADMAP -->
+<section id="roadmap">
+<div class="wrap">
+  <div class="eyebrow">Roadmap</div>
+  <h2 class="sec-h">3단계 정착 로드맵</h2>
+  <p class="sec-p">단계적으로 사업을 확장하며 안정적인 복지사업 재원을 마련합니다.</p>
+
+  <div class="roadmap-grid">
+    <div class="rs">
+      <div class="rs-bar"></div>
+      <span class="rs-num">STEP 01</span>
+      <div class="rs-title">보드게임팀 &amp; 홍보팀 운영</div>
+      <div class="rs-period">약 3년 예상</div>
+      <ul class="rs-items">
+        <li>변화가 중심 보드게임 카페 지점 운영</li>
+        <li>폴투이티 오리지널 기능성 보드게임 독점 체험</li>
+        <li>초기 자금 1억 5천만원으로 1호점 시작</li>
+        <li>수익 발생 시 지속적 지점 확대</li>
+      </ul>
+    </div>
+    <div class="rs">
+      <div class="rs-bar"></div>
+      <span class="rs-num">STEP 02</span>
+      <div class="rs-title">모바일 게임팀 신설 및 운영</div>
+      <div class="rs-period">약 2년 예상</div>
+      <ul class="rs-items">
+        <li>1단계 재정 기반으로 모바일 게임 개발 시작</li>
+        <li>1년 주기로 기능성 모바일 게임 출시</li>
+        <li>게임 2개 출시 시 연 약 7억원 순수익 예상</li>
+        <li>연 5억원 이상 안정 시 3단계 진행</li>
+      </ul>
+    </div>
+    <div class="rs">
+      <div class="rs-bar"></div>
+      <span class="rs-num">STEP 03</span>
+      <div class="rs-title">비영리재단 설립</div>
+      <div class="rs-period">최종 목표</div>
+      <ul class="rs-items">
+        <li>비영리재단 폴투이티 인터내셔널 설립</li>
+        <li>해외 복지사업 수행 인력 채용</li>
+        <li>저소득국 교육사업 본격 추진</li>
+        <li>수익 전액을 재단에 매달 기부</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- GAMES -->
+<section id="games">
+<div class="wrap">
+  <div class="eyebrow">Our Games</div>
+  <h2 class="sec-h">폴투이티의 게임들</h2>
+  <p class="sec-p">사회적 가치를 게임 속에 자연스럽게 담습니다. 아래에서 새로운 게임을 추가해 주세요.</p>
+
+  <div class="games-grid" id="games-grid"></div>
+
+  <div class="add-form">
+    <span class="form-tag" id="form-tag">NEW GAME</span>
+    <div class="form-title" id="form-title">새 게임 추가</div>
+    <input type="hidden" id="edit-id">
+    <div class="form-grid">
+      <div class="field">
+        <label>게임 이름</label>
+        <input type="text" id="g-name" placeholder="예: 우연의 주사위" maxlength="40">
+      </div>
+      <div class="field">
+        <label>이미지 URL 또는 이모지</label>
+        <input type="text" id="g-img" placeholder="이미지 URL 또는 🎲 이모지">
+      </div>
+      <div class="field full">
+        <label>게임 소개</label>
+        <textarea id="g-desc" placeholder="게임의 내용과 사회적 메시지를 소개해 주세요"></textarea>
       </div>
     </div>
-    <div class="field">
-      <label>🔢 번호</label>
-      <input type="number" id="inp-num" placeholder="번호를 입력해요" min="1" max="99" inputmode="numeric" />
+    <div class="form-actions">
+      <button class="btn-submit" id="btn-submit" type="button">게임 등록하기</button>
+      <button class="btn-cancel" id="btn-cancel" type="button">취소</button>
     </div>
-    <div class="field">
-      <label>👤 이름</label>
-      <input type="text" id="inp-name" placeholder="이름을 입력해요" maxlength="10" />
-    </div>
-    <button class="btn-submit" id="btn-submit" type="button">🩷 등록하기</button>
   </div>
-  <button class="btn-list" id="btn-go-list" type="button">📋 전체 출석부 보기</button>
 </div>
+</section>
 
-<!-- 출석부 -->
-<div class="page" id="page-list">
-  <div class="top-bar">
-    <div class="top-logo"><span class="bounce">🩷</span> 전체 출석부</div>
-    <button class="btn-back" id="btn-back" type="button">← 홈으로</button>
+<footer>
+  <div class="footer-logo">fortuity<div class="nav-dot"></div></div>
+  <div class="footer-info">
+    기능성 게임이 만들어가는 사회적 가치<br>
+    lcsf31150@snu.ac.kr &nbsp;|&nbsp; 010-8607-2633
   </div>
-  <div class="list-header">
-    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-      <span class="list-title">출석부 📋</span>
-      <span class="count-badge" id="total-count">0명</span>
-    </div>
-    <button class="btn-clear" id="btn-clear" type="button">🗑️ 전체 삭제</button>
-  </div>
-  <div class="filter-tabs">
-    <button class="filter-tab active" data-filter="전체" type="button">🌸 전체</button>
-    <button class="filter-tab" data-filter="사과나무반" type="button">🍎 사과나무반</button>
-    <button class="filter-tab" data-filter="참나무반" type="button">🌳 참나무반</button>
-  </div>
-  <div id="list-area"></div>
-</div>
+</footer>
 
 <script>
-(function() {
-  var selectedClass = '';
-  var currentFilter = '전체';
-
-  function getStudents() {
-    try { return JSON.parse(localStorage.getItem('hachupingStudents') || '[]'); }
-    catch(e) { return []; }
+(function(){
+  var editingId=null;
+  function getGames(){try{return JSON.parse(localStorage.getItem('fortuityGames')||'[]');}catch(e){return[];}}
+  function saveGames(l){localStorage.setItem('fortuityGames',JSON.stringify(l));}
+  function toast(msg){
+    var t=document.getElementById('toast');
+    t.textContent=msg;t.style.display='block';
+    clearTimeout(t._t);t._t=setTimeout(function(){t.style.display='none';},2200);
   }
-  function saveStudents(list) {
-    localStorage.setItem('hachupingStudents', JSON.stringify(list));
-  }
-
-  function showToast(msg) {
-    var t = document.getElementById('toast');
-    t.textContent = msg;
-    t.style.display = 'block';
-    clearTimeout(t._timer);
-    t._timer = setTimeout(function() { t.style.display = 'none'; }, 2200);
-  }
-
-  function selectClass(cls) {
-    selectedClass = cls;
-    document.getElementById('btn-apple').classList.toggle('selected', cls === '사과나무반');
-    document.getElementById('btn-oak').classList.toggle('selected', cls === '참나무반');
-  }
-
-  function addStudent() {
-    if (!selectedClass) { showToast('⚠️ 반을 먼저 선택해 주세요!'); return; }
-    var num = document.getElementById('inp-num').value.trim();
-    var name = document.getElementById('inp-name').value.trim();
-    if (!num) { showToast('⚠️ 번호를 입력해 주세요!'); return; }
-    if (!name) { showToast('⚠️ 이름을 입력해 주세요!'); return; }
-
-    var list = getStudents();
-    list.push({ cls: selectedClass, num: parseInt(num), name: name, id: Date.now() });
-    list.sort(function(a, b) {
-      if (a.cls !== b.cls) return a.cls < b.cls ? -1 : 1;
-      return a.num - b.num;
-    });
-    saveStudents(list);
-    showToast('🩷 ' + name + ' 등록 완료!');
-    document.getElementById('inp-num').value = '';
-    document.getElementById('inp-name').value = '';
-    selectedClass = '';
-    document.getElementById('btn-apple').classList.remove('selected');
-    document.getElementById('btn-oak').classList.remove('selected');
-  }
-
-  function goList() {
-    document.getElementById('page-home').classList.remove('active');
-    document.getElementById('page-list').classList.add('active');
-    renderList();
-    window.scrollTo(0, 0);
-  }
-
-  function goHome() {
-    document.getElementById('page-list').classList.remove('active');
-    document.getElementById('page-home').classList.add('active');
-    window.scrollTo(0, 0);
-  }
-
-  function setFilter(f) {
-    currentFilter = f;
-    document.querySelectorAll('.filter-tab').forEach(function(btn) {
-      btn.classList.toggle('active', btn.dataset.filter === f);
-    });
-    renderList();
-  }
-
-  function deleteStudent(id) {
-    var list = getStudents().filter(function(s) { return s.id !== id; });
-    saveStudents(list);
-    renderList();
-  }
-
-  function renderList() {
-    var all = getStudents();
-    var list = currentFilter === '전체' ? all : all.filter(function(s) { return s.cls === currentFilter; });
-    document.getElementById('total-count').textContent = all.length + '명';
-    var area = document.getElementById('list-area');
-    if (list.length === 0) {
-      area.innerHTML = '<div class="empty-state"><span class="empty-icon">🌸</span><p>아직 등록된 학생이 없어요!</p></div>';
+  function isUrl(s){return s.startsWith('http')||s.startsWith('/');}
+  function render(){
+    var list=getGames();
+    var grid=document.getElementById('games-grid');
+    if(!list.length){
+      grid.innerHTML='<div class="game-empty"><span class="game-empty-icon">🎮</span>아직 등록된 게임이 없어요.<br>아래에서 첫 번째 게임을 추가해 보세요.</div>';
       return;
     }
-    var rows = list.map(function(s, i) {
-      var badgeClass = s.cls === '사과나무반' ? 'badge-apple' : 'badge-oak';
-      var icon = s.cls === '사과나무반' ? '🍎' : '🌳';
-      return '<tr>'
-        + '<td>' + (i+1) + '</td>'
-        + '<td><span class="badge-class ' + badgeClass + '">' + icon + ' ' + s.cls + '</span></td>'
-        + '<td>' + s.num + '</td>'
-        + '<td><strong>' + s.name + '</strong></td>'
-        + '<td><button class="btn-delete" type="button" data-id="' + s.id + '">삭제</button></td>'
-        + '</tr>';
+    grid.innerHTML=list.map(function(g){
+      var media=isUrl(g.img)
+        ?'<img src="'+g.img+'" alt="'+g.name+'" onerror="this.parentElement.innerHTML=\'🎮\'">'
+        :'<div style="font-size:52px;">'+g.img+'</div>';
+      return '<div class="game-card">'
+        +'<div class="game-img-wrap">'+media+'</div>'
+        +'<div class="game-body">'
+        +'<div class="game-name">'+g.name+'</div>'
+        +'<div class="game-desc">'+g.desc+'</div>'
+        +'<div class="game-controls">'
+        +'<button class="btn-eg" type="button" data-id="'+g.id+'">수정</button>'
+        +'<button class="btn-dg" type="button" data-id="'+g.id+'">삭제</button>'
+        +'</div></div></div>';
     }).join('');
-    area.innerHTML = '<table class="attendance-table"><thead><tr><th>#</th><th>반</th><th>번호</th><th>이름</th><th></th></tr></thead><tbody>' + rows + '</tbody></table>';
-
-    // 삭제 버튼 이벤트 (동적 생성 요소이므로 여기서 등록)
-    area.querySelectorAll('.btn-delete').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        deleteStudent(Number(this.dataset.id));
-      });
+    grid.querySelectorAll('.btn-eg').forEach(function(b){
+      b.addEventListener('click',function(){editGame(Number(this.dataset.id));});
+    });
+    grid.querySelectorAll('.btn-dg').forEach(function(b){
+      b.addEventListener('click',function(){deleteGame(Number(this.dataset.id));});
     });
   }
-
-  // 이벤트 등록
-  document.getElementById('btn-apple').addEventListener('click', function() { selectClass('사과나무반'); });
-  document.getElementById('btn-oak').addEventListener('click', function() { selectClass('참나무반'); });
-  document.getElementById('btn-submit').addEventListener('click', addStudent);
-  document.getElementById('btn-go-list').addEventListener('click', goList);
-  document.getElementById('btn-back').addEventListener('click', goHome);
-  document.getElementById('btn-clear').addEventListener('click', function() {
-    if (confirm('정말 전체 출석부를 삭제할까요? 😢')) { saveStudents([]); renderList(); }
-  });
-
-  document.querySelectorAll('.filter-tab').forEach(function(btn) {
-    btn.addEventListener('click', function() { setFilter(this.dataset.filter); });
-  });
-
-  document.getElementById('inp-num').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') document.getElementById('inp-name').focus();
-  });
-  document.getElementById('inp-name').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') addStudent();
-  });
+  function submit(){
+    var name=document.getElementById('g-name').value.trim();
+    var img=document.getElementById('g-img').value.trim()||'🎮';
+    var desc=document.getElementById('g-desc').value.trim();
+    if(!name){toast('게임 이름을 입력해 주세요');return;}
+    if(!desc){toast('게임 소개를 입력해 주세요');return;}
+    var list=getGames();
+    if(editingId!==null){
+      list=list.map(function(g){return g.id===editingId?{id:g.id,name:name,img:img,desc:desc}:g;});
+      toast('게임이 수정되었어요');cancelEdit();
+    } else {
+      list.push({id:Date.now(),name:name,img:img,desc:desc});
+      toast('게임이 등록되었어요');
+      document.getElementById('g-name').value='';
+      document.getElementById('g-img').value='';
+      document.getElementById('g-desc').value='';
+    }
+    saveGames(list);render();
+  }
+  function editGame(id){
+    var g=getGames().find(function(x){return x.id===id;});
+    if(!g)return;
+    editingId=id;
+    document.getElementById('g-name').value=g.name;
+    document.getElementById('g-img').value=g.img;
+    document.getElementById('g-desc').value=g.desc;
+    document.getElementById('form-tag').textContent='EDIT GAME';
+    document.getElementById('form-title').textContent='게임 수정';
+    document.getElementById('btn-submit').textContent='수정 완료';
+    document.getElementById('btn-cancel').style.display='inline-block';
+    document.querySelector('.add-form').scrollIntoView({behavior:'smooth',block:'center'});
+  }
+  function cancelEdit(){
+    editingId=null;
+    document.getElementById('g-name').value='';
+    document.getElementById('g-img').value='';
+    document.getElementById('g-desc').value='';
+    document.getElementById('form-tag').textContent='NEW GAME';
+    document.getElementById('form-title').textContent='새 게임 추가';
+    document.getElementById('btn-submit').textContent='게임 등록하기';
+    document.getElementById('btn-cancel').style.display='none';
+  }
+  function deleteGame(id){
+    if(!confirm('이 게임을 삭제할까요?'))return;
+    saveGames(getGames().filter(function(g){return g.id!==id;}));
+    toast('삭제되었어요');render();
+  }
+  document.getElementById('btn-submit').addEventListener('click',submit);
+  document.getElementById('btn-cancel').addEventListener('click',cancelEdit);
+  render();
 })();
 </script>
 </body>

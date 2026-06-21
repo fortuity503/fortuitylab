@@ -1,0 +1,27 @@
+{
+  "name": "modu-church",
+  "version": "1.0.0",
+  "description": "모두의 교회 mobile PWA and Android app package",
+  "main": "index.html",
+  "scripts": {
+    "prepare:web": "mkdir -p www && cp index.html www/index.html",
+    "sync:android": "npm run prepare:web && cap sync android",
+    "build:android": "npm run sync:android && cd android && ./gradlew assembleDebug"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fortuity503/fortuitylab.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fortuity503/fortuitylab/issues"
+  },
+  "homepage": "https://github.com/fortuity503/fortuitylab#readme",
+  "devDependencies": {
+    "@capacitor/android": "^8.4.1",
+    "@capacitor/cli": "^8.4.1",
+    "@capacitor/core": "^8.4.1"
+  }
+}
